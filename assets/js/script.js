@@ -93,8 +93,9 @@ $(".list-group").on("click", "p", function() {
   var text = $(this)
     .text()
     var textInput = $("<textarea>")
+    $(this).replaceWith(textInput);
   .addClass("form-control")
-  .val(text);
+  .val(text)
     .trim();
 });
 // load tasks for the first time
