@@ -93,10 +93,28 @@ $(".list-group").on("click", "p", function() {
   var text = $(this)
     .text()
     var textInput = $("<textarea>")
-    $(this).replaceWith(textInput);
+    $(this).replaceWith(textInput)
+    textInput.trigger("focus")
   .addClass("form-control")
   .val(text)
-    .trim();
+    });
+
+$(".list-group").on("blur", "textarea", function() {
+// get the textarea's current value/text
+var text = $(this)
+  .val()
+  .trim();
+
+// get the parent ul's id attribute
+var status = $(this)
+  .closest(".list-group")
+  .attr("id")
+  .replace("list-", "");
+
+// get the task's position in the list of other li elements
+var index = $(this)
+  .closest(".list-group-item")
+  .index();
 });
 // load tasks for the first time
 loadTasks();
