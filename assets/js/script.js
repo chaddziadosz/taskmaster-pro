@@ -30,7 +30,7 @@ var loadTasks = function() {
       done: []
     };
   }
-
+}
   // loop over object properties
   $.each(tasks, function(list, arr) {
     
@@ -39,7 +39,7 @@ var loadTasks = function() {
       createTask(task.text, task.date, list);
     });
   });
-};
+
 
 var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -81,7 +81,9 @@ $("#task-form-modal .btn-primary").click(function() {
     saveTasks();
   }
 });
-
+$(".list-group").on("click", "p", function() {
+  console.log(this);
+});
 // remove all tasks
 $("#remove-tasks").on("click", function() {
   for (var key in tasks) {
