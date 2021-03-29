@@ -92,10 +92,10 @@ $("#remove-tasks").on("click", function() {
 $(".list-group").on("click", "p", function() {
   var text = $(this)
     .text()
-    $(this).replaceWith(textInput)
-    textInput.trigger("focus")
- .addClass("form-control")
+    var textInput = $("<textarea>")
+  .addClass("form-control")
   .val(text);
+    .trim();
 });
 // load tasks for the first time
 loadTasks();
