@@ -65,8 +65,8 @@ $("#task-form-modal .btn-primary").click(function() {
   // get form values
   var taskText = $("#modalTaskDescription").val();
   var taskDate = $("#modalDueDate").val();
-
-  if (taskText && taskDate) {
+  var textInput = $("<textarea>")
+    if (taskText && taskDate) {
     createTask(taskText, taskDate, "toDo");
 
     // close modal
@@ -81,9 +81,6 @@ $("#task-form-modal .btn-primary").click(function() {
     saveTasks();
   }
 });
-$(".list-group").on("click", "p", function() {
-  console.log(this);
-});
 // remove all tasks
 $("#remove-tasks").on("click", function() {
   for (var key in tasks) {
@@ -92,7 +89,14 @@ $("#remove-tasks").on("click", function() {
   }
   saveTasks();
 });
-
+$(".list-group").on("click", "p", function() {
+  var text = $(this)
+    .text()
+    $(this).replaceWith(textInput);
+  .addClass("form-control")
+  .val(text);
+    .trim();
+});
 // load tasks for the first time
 loadTasks();
 
