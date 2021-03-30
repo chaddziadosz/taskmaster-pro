@@ -30,16 +30,16 @@ var loadTasks = function() {
       done: []
     };
   }
-}
+
   // loop over object properties
   $.each(tasks, function(list, arr) {
-    
+    console.log(list, arr);
     // then loop over sub-array
     arr.forEach(function(task) {
       createTask(task.text, task.date, list);
     });
   });
-
+};
 
 var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -65,8 +65,8 @@ $("#task-form-modal .btn-primary").click(function() {
   // get form values
   var taskText = $("#modalTaskDescription").val();
   var taskDate = $("#modalDueDate").val();
-  var textInput = $("<textarea>")
-    if (taskText && taskDate) {
+
+  if (taskText && taskDate) {
     createTask(taskText, taskDate, "toDo");
 
     // close modal
@@ -81,28 +81,76 @@ $("#task-form-modal .btn-primary").click(function() {
     saveTasks();
   }
 });
-// remove all tasks
-$("#remove-tasks").on("click", function() {
-  for (var key in tasks) {
-    tasks[key].length = 0;
-    $("#list-" + key).empty();
-  }
-  saveTasks();
-});
-// value of due date was changed
-$(".list-group").on("blur", "input[type='text']", function() {
-  // get current text
-  var date = $(this)
-    .val()
+
+// task text was clicked
+$(".list-group").on("click", "p", function() {
+  // get current text of p element
+  var text = $(this)
+    .text()
     .trim();
 
-  // get the parent ul's id attribute
+  // replace p element with a new textarea
+  var textInput = $("<textarea>").addClass("form-control").val(text);
+  $(this).replaceWith(textInput);
+
+  // auto focus new element
+  textInput.trigger("focus");
+});
+
+// editable field was un-focused
+$(".list-group").on("blur", "textarea", function() {
+  // get current value of textarea
+  var text = $(this).val();
+
+  // get status type and position in the list
   var status = $(this)
     .closest(".list-group")
     .attr("id")
     .replace("list-", "");
+  var index = $(this)
+    .closest(".list-group-item")
+    .index();
 
-  // get the task's position in the list of other li elements
+  // update task in array and re-save to localstorage
+  tasks[status][index].text = text;
+  saveTasks();
+
+  // recreate p element
+  var taskP = $("<p>")
+    .addClass("m-1")
+    .text(text);
+
+  // replace textarea with new content
+  $(this).replaceWith(taskP);
+});
+
+// due date was clicked
+$(".list-group").on("click", "span", function() {
+  // get current text
+  var date = $(this)
+    .text()
+    .trim();
+
+  // create new input element
+  var dateInput = $("<input>")
+    .attr("type", "text")
+    .addClass("form-control")
+    .val(date);
+  $(this).replaceWith(dateInput);
+
+  // automatically bring up the calendar
+  dateInput.trigger("focus");
+});
+
+// value of due date was changed
+$(".list-group").on("blur", "input[type='text']", function() {
+  var date = $(this).val();
+
+  // get status type and position in the list
+  var status = $(this)
+    .closest(".list-group")
+    .attr("id")
+    .replace("list-", "");
   var index = $(this)
     .closest(".list-group-item")
     .index();
@@ -111,43 +159,21 @@ $(".list-group").on("blur", "input[type='text']", function() {
   tasks[status][index].date = date;
   saveTasks();
 
-  // recreate span element with bootstrap classes
+  // recreate span and insert in place of input element
   var taskSpan = $("<span>")
     .addClass("badge badge-primary badge-pill")
     .text(date);
-
-  // replace input with span element
-  $(this).replaceWith(taskSpan);
+    $(this).replaceWith(taskSpan);
 });
 
-$(".list-group").on("blur", "textarea", function() {
-// get the textarea's current value/text
-var text = $(this)
-  .val()
-  .trim();
-
-// get the parent ul's id attribute
-var status = $(this)
-  .closest(".list-group")
-  .attr("id")
-  .replace("list-", "");
-
-// get the task's position in the list of other li elements
-var index = $(this)
-  .closest(".list-group-item")
-  .index();
-  tasks[status][index].text = text;
+// remove all tasks
+$("#remove-tasks").on("click", function() {
+  for (var key in tasks) {
+    tasks[key].length = 0;
+    $("#list-" + key).empty();
+  }
   saveTasks();
-  // recreate p element
-var taskP = $("<p>")
-.addClass("m-1")
-.text(text);
-
-// replace textarea with p element
-$(this).replaceWith(taskP);
 });
 
 // load tasks for the first time
 loadTasks();
-
-
